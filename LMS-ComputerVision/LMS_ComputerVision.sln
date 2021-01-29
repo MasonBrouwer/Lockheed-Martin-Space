@@ -1,0 +1,29 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30907.101
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LMS_ComputerVision", "LMS_ComputerVision\LMS_ComputerVision.vcxproj", "{B48CB4E5-9842-42FA-8D33-6E37C73013EE}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x64 = Debug|x64
+		Debug|x86 = Debug|x86
+		Release|x64 = Release|x64
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{B48CB4E5-9842-42FA-8D33-6E37C73013EE}.Debug|x64.ActiveCfg = Debug|x64
+		{B48CB4E5-9842-42FA-8D33-6E37C73013EE}.Debug|x64.Build.0 = Debug|x64
+		{B48CB4E5-9842-42FA-8D33-6E37C73013EE}.Debug|x86.ActiveCfg = Debug|x64
+		{B48CB4E5-9842-42FA-8D33-6E37C73013EE}.Release|x64.ActiveCfg = Release|x64
+		{B48CB4E5-9842-42FA-8D33-6E37C73013EE}.Release|x64.Build.0 = Release|x64
+		{B48CB4E5-9842-42FA-8D33-6E37C73013EE}.Release|x86.ActiveCfg = Release|x64
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {511FCAC6-F4E7-46A8-8306-2189E485C169}
+	EndGlobalSection
+EndGlobal
