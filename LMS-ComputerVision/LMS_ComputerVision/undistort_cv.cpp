@@ -28,10 +28,17 @@
 #include <opencv2/highgui.hpp>
 #include <opencv2/calib3d.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
+#include <chrono>
 #include <iostream>
 
 using namespace cv;
 using namespace std;
+using namespace std::chrono;
+
+// variables for refining corner calculations. Useful for benchmarking
+int corner_size = 10;
+int corner_count = 30;
+float corner_eps = 0.1;
 
 Mat distorted_image;
 Mat undistorted_image;
@@ -39,6 +46,8 @@ Mat camera_matrix, distorsion_coefficients;
 
 int main(int argc, char** argv)
 {
+    auto start = high_resolution_clock::now(); //benchmarking
+
     bool undistort_flag = false;
     bool calibrate_flag = false;
 
@@ -114,8 +123,8 @@ int main(int argc, char** argv)
             found = findChessboardCorners(distorted_chessboard, board_size, corners);
             if (found) 
             {
-                cornerSubPix(grey, corners, Size(10, 10), Size(-1, -1), 
-                    TermCriteria(TermCriteria::COUNT|TermCriteria::EPS,30,0.1)); //refine corners //TODO: benchmark the first Size(10, 10) to see if there is any performance difference or quality gain. Also benchmark criteria
+                cornerSubPix(grey, corners, Size(corner_size, corner_size), Size(-1, -1),
+                    TermCriteria(TermCriteria::COUNT|TermCriteria::EPS, corner_count,corner_eps)); //refine corners
                 image_points.push_back(corners);
 
                 drawChessboardCorners(distorted_chessboard, board_size, corners, found);
@@ -167,6 +176,11 @@ int main(int argc, char** argv)
 
             file.release();
         }
+
+        // finish benchmarking and return runtime
+        auto stop = high_resolution_clock::now();
+        auto duration = duration_cast<microseconds>(stop - start);
+        cout << "Total runtime: " << duration.count() << " microseconds" << endl;
 
         cout << "Displaying distorted and undistorted images..." << endl;
 
