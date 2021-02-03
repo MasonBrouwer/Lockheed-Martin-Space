@@ -171,9 +171,9 @@ int main(int argc, char** argv)
         cout << "Displaying distorted and undistorted images..." << endl;
 
         /// Display distorted and undistorted images ///
-        namedWindow("Distorted Image", WINDOW_AUTOSIZE);
+        namedWindow("Distorted Image", WINDOW_NORMAL);
         imshow("Distorted Image", distorted_image);
-        namedWindow("Undistorted Image", WINDOW_AUTOSIZE);
+        namedWindow("Undistorted Image", WINDOW_NORMAL);
         imshow("Undistorted Image", undistorted_image);
 
         waitKey(0); // Wait for a keystroke in the window
