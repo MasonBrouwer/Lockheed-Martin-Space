@@ -38,7 +38,7 @@ using namespace std::chrono;
 // variables for refining corner calculations. Useful for benchmarking
 int corner_size = 10;
 int corner_count = 30;
-float corner_eps = 0.1;
+double corner_eps = 0.1;
 
 Mat distorted_image;
 Mat undistorted_image;
@@ -68,7 +68,7 @@ int main(int argc, char** argv)
 
                 cout << "Opening " << argv[i] << " for undistortion..." << endl;
 
-                distorted_image = imread(argv[i], IMREAD_COLOR); //TODO: catch errors
+                distorted_image = imread(argv[i], IMREAD_COLOR);
                 if (distorted_image.empty())
                 {
                     cout << "Could not open or find the image" << endl;
