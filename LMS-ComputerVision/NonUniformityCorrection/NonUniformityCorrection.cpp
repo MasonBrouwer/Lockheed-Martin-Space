@@ -19,6 +19,8 @@
 #include <opencv2/highgui.hpp>
 #include <opencv2/imgproc.hpp>
 
+// Adding a comment for a test because github is weird
+
 using namespace cv;
 
 // Note: We're NOT using the standard namespace here to avoid collisions between the beta variable and std::beta in c++17
