@@ -1,4 +1,4 @@
 ﻿C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Microsoft\VC\v160\Microsoft.CppBuild.targets(491,5): warning MSB8028: The intermediate directory (x64\Debug\) contains files shared from another project (LMS_ComputerVision.vcxproj).  This can lead to incorrect clean and rebuild behavior.
   undistort_cv.cpp
-C:\Users\mason\source\repos\Lockheed-Martin-Space\LMS-ComputerVision\LMS_ComputerVision\undistort_cv.cpp(41,23): warning C4305: 'initializing': truncation from 'double' to 'float'
-  LMS_ComputerVision.vcxproj -> C:\Users\mason\source\repos\Lockheed-Martin-Space\LMS-ComputerVision\x64\Debug\Undistort.exe
+C:\Users\Grant\source\repos\Lockheed-Martin-Space\LMS-ComputerVision\LMS_ComputerVision\undistort_cv.cpp(41,23): warning C4305: 'initializing': truncation from 'double' to 'float'
+  LMS_ComputerVision.vcxproj -> C:\Users\Grant\Source\Repos\Lockheed-Martin-Space\LMS-ComputerVision\x64\Debug\Undistort.exe

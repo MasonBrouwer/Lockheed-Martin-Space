@@ -34,3 +34,9 @@
 # Other stuff that makes it weird for Grant to git commit
 *.opendb
 /LMS-ComputerVision/x64/Debug/*.exe
+
+# Property sheets for Grant's OpenCV
+OpenCV_Debug_x86.props
+OpenCV_Debug_x64.props
+OpenCV_Release_x86.props
+OpenCV_Release_x64.props
