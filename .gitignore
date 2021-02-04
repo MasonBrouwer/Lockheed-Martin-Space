@@ -35,3 +35,8 @@
 *.opendb
 /LMS-ComputerVision/x64/Debug/*.exe
 /LMS-ComputerVision/.vs/LMS_ComputerVision/v16/*.db-shm
+/LMS-ComputerVision/.vs/LMS_ComputerVision/v16/*.db
+/LMS-ComputerVision/.vs/LMS_ComputerVision/v16/*.db-shm
+/LMS-ComputerVision/.vs/LMS_ComputerVision/v16/*.db-wal
+/LMS-ComputerVision/.vs/LMS_ComputerVision/v16/*.db-shm~60312a60dfcfb1f270722b7e7bc67d9183d532e2
+/LMS-ComputerVision/.vs/LMS_ComputerVision/v16/*.suo
