@@ -34,9 +34,18 @@
 # Other stuff that makes it weird for Grant to git commit
 *.opendb
 /LMS-ComputerVision/x64/Debug/*.exe
+<<<<<<< HEAD
 /LMS-ComputerVision/.vs/LMS_ComputerVision/v16/*.db-shm
 /LMS-ComputerVision/.vs/LMS_ComputerVision/v16/*.db
 /LMS-ComputerVision/.vs/LMS_ComputerVision/v16/*.db-shm
 /LMS-ComputerVision/.vs/LMS_ComputerVision/v16/*.db-wal
 /LMS-ComputerVision/.vs/LMS_ComputerVision/v16/*.db-shm~60312a60dfcfb1f270722b7e7bc67d9183d532e2
 /LMS-ComputerVision/.vs/LMS_ComputerVision/v16/*.suo
+=======
+
+# Property sheets for Grant's OpenCV
+OpenCV_Debug_x86.props
+OpenCV_Debug_x64.props
+OpenCV_Release_x86.props
+OpenCV_Release_x64.props
+>>>>>>> eece296048fa447a3a091b7cc43af0da0340af14

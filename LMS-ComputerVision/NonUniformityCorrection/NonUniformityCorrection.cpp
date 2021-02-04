@@ -27,6 +27,10 @@ using namespace cv;
 using std::cin;
 using std::cout;
 using std::endl;
+using std::string;
+
+// Absolute path to the test image
+const string FILE_NAME = "C:\\Users\\Grant\\source\\repos\\Lockheed-Martin-Space\\LMS-ComputerVision\\x64\\Debug\\test3.jpg";
 
 /**
 *   Function to test the filter2d() function from OpenCV
@@ -87,6 +91,31 @@ int test_filter2d(int argc, char** argv)
     return EXIT_SUCCESS;
 }
 
+
+/**
+*   Test function to run some OpenCV tutorials
+*/
+int test(string fileName)
+{
+    Mat img = imread(fileName, IMREAD_COLOR);
+    if (img.empty())
+    {
+        cout << "Could not find image" << endl;
+        return -2;
+    }
+
+    imshow("Before", img);
+
+
+    img.row(3) = img.row(3) + img.row(5) * 3;
+    imshow("After", img);
+
+    cout << img.size() << endl;
+
+    waitKey(0);
+}
+
+
 int main(int argc, char** argv)
 {
     // From the OpenCV tutorial "tutorial_adding_images"
@@ -129,7 +158,7 @@ int main(int argc, char** argv)
         cout << "Error loading src2" << endl;
         return EXIT_FAILURE;
     }
-
+    
     beta = (1.0 - alpha);
 
     // addWeighted() produces:
@@ -137,8 +166,10 @@ int main(int argc, char** argv)
     addWeighted(src1, alpha, src2, beta, gamma, output);
 
     // Create the window to show the images and wait for the user to end the program
-    imshow("Linear Blend", output);
-    waitKey(0);
+    //imshow("Linear Blend", output);
+    //waitKey(0);
+
+    test(FILE_NAME);
 
     // test_filter2d(argc, argv);
 }
