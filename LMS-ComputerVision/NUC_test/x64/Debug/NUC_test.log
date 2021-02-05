@@ -1,2 +1,2 @@
-﻿  nuc_ops.cpp
-  NUC_test.vcxproj -> C:\Users\mason\source\repos\Lockheed-Martin-Space\LMS-ComputerVision\x64\Debug\NUC_test.exe
+﻿  nuc.cpp
+C:\Users\mason\source\repos\Lockheed-Martin-Space\LMS-ComputerVision\NUC_test\nuc.cpp : fatal error C1041: cannot open program database 'C:\Users\mason\source\repos\Lockheed-Martin-Space\LMS-ComputerVision\NUC_test\x64\Debug\vc142.pdb'; if multiple CL.EXE write to the same .PDB file, please use /FS
