@@ -65,6 +65,11 @@ int main(int argc, char** argv)
             {
                 undistort_flag = true;
                 i++;
+				
+				if (i >= argc) {
+                    cout << "Could not open or find the image" << endl;
+                    return -2;
+                }
 
                 cout << "Opening " << argv[i] << " for undistortion..." << endl;
 
@@ -72,7 +77,7 @@ int main(int argc, char** argv)
                 if (distorted_image.empty())
                 {
                     cout << "Could not open or find the image" << endl;
-                    return -2;
+                    return -3;
                 }
             }
             else if (strcmp(argv[i], "-cal") == 0)
@@ -82,7 +87,7 @@ int main(int argc, char** argv)
             else
             {
                 cout << "Unknown argument: " << argv[i] << endl;
-                return -3;
+                return -4;
             }
         }
     }
