@@ -15,7 +15,7 @@
 using namespace cv;
 using namespace std;
 
-const int SIGMA_MIN = 0; // minimal std-dev of the Gaussian-weighting function
+const int SIGMA_MIN = 0; //minimal std-dev of the Gaussian-weighting function
 const int SIGMA_MAX = 8; //maximal std-dev of the Gaussian-weighting function
 const float DELTA = 0.5; //step between two consecutive std-dev
 
@@ -55,8 +55,8 @@ int main(int argc, char** argv)
 
 	cout << "Fixing border..." << endl;
 
-	// Border stuff
-	flat_image = mirror(flat_image, width, height, 4 * SIGMA_MAX); //TODO: create output image to work more like example
+	// Border mirroring
+	flat_image = mirror(flat_image, width, height, 4 * SIGMA_MAX);
 
 	// MIRE stuff
 
