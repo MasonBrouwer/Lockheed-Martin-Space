@@ -59,7 +59,7 @@ int main(int argc, char** argv)
 	flat_image = mirror(flat_image, width, height, 4 * SIGMA_MAX);
 
 	// MIRE stuff
-
+	flat_image = automire(flat_image, width + 8 * SIGMA_MAX, height, SIGMA_MIN, SIGMA_MAX, DELTA);
 
 	cout << "Restoring image matrix..." << endl;
 
@@ -72,6 +72,8 @@ int main(int argc, char** argv)
 			output_image.at<uchar>(row, col) = flat_image[static_cast<_int64>(row) * width + col];
 		}
 	}
+
+	cout << "Displaying images..." << endl;
 
 	// Output Image before and after
 	namedWindow("Input Image", WINDOW_AUTOSIZE); //WINDOW_NORMAL for resizable windows

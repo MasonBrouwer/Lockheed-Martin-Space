@@ -1,4 +1,6 @@
 
+// TODO: optimize these functions (many don't need to create intermediate image vectors, might be faster to modify the original image arg than to return an image vector)
+
 #include <opencv2/core.hpp>
 #include <opencv2/imgcodecs.hpp>
 #include <opencv2/highgui.hpp>
@@ -10,6 +12,8 @@
 
 using namespace cv;
 using namespace std;
+
+float M_PI = 3.14159265358979323846;
 
 // From borders.cpp from srcmire_2
 vector<int> mirror(vector<int> image, int width, int height, int perimiter)
@@ -47,4 +51,196 @@ vector<int> mirror(vector<int> image, int width, int height, int perimiter)
 	}
 	
 	return output_image;
+}
+
+vector<int> automire(vector<int> image, int width, int height, int SIGMA_MIN, int SIGMA_MAX, float DELTA)
+{
+	//vector<int> output_image(static_cast<_int64>(width) * height);
+	vector<int> temp_image(static_cast<_int64>(width) * height);
+	float sigma_current;
+	float sigma_best;
+	float TV_current;
+	float TV_min;
+
+	cout << "Initializing MIRE algorithm..." << endl;
+
+	// Initialize
+	sigma_best = SIGMA_MIN;
+	for (int i = 0; i < width * height; i++)
+	{
+		temp_image[i] = image[i];
+	}
+	if (SIGMA_MIN == 0)
+	{
+		TV_current = TV_column_norm(temp_image, width, height, 4 * SIGMA_MAX);
+	}
+	else 
+	{
+		TV_current = TV_column_norm(mire(temp_image, SIGMA_MIN, width, height), width, height, 4 * SIGMA_MAX);
+	}
+	TV_min = TV_current;
+	sigma_current = SIGMA_MIN;
+
+	cout << "Guessing best sigma..." << endl;
+
+	// Guess the best Sigma
+	/*
+	int T = round((SIGMA_MAX - SIGMA_MIN) / DELTA)+1;
+	for (int i = 0; i < width * height; i++)
+	{
+		for (int j = 0; j < width * height; j++)
+		{
+			temp_image[j] = image[j];
+		}
+
+		TV_current = TV_column_norm(mire(image, sigma_current, width, height), width, height, 4 * SIGMA_MAX);
+
+		if (TV_current < TV_min)
+		{
+			sigma_best = sigma_current;
+			TV_min = TV_current;
+		}
+
+		cout << "current sigma: " << sigma_current << endl;
+
+		sigma_current = sigma_current + DELTA;
+	}
+	*/
+	sigma_best = 2.5;
+
+	cout << "Applying MIRE with best sigma..." << endl;
+
+	// Apply MIRE with the best sigma
+	if (sigma_best != 0)
+	{
+		image = mire(image, sigma_best, width, height);
+	}
+	cout << "SIGMA_BEST: " << sigma_best << endl;
+
+	return image;
+}
+
+vector<int> mire(vector<int> image, float sigma, int width, int height)
+{
+	cout << "test1" << endl;
+
+	vector<vector<int>> v;
+	vector<vector<int>> c_sorted;
+	c_sorted = column_sorting(image, width, height); // takes a long time
+
+	cout << "test2" << endl;
+
+	/*
+	vector<int> temp(static_cast<_int64>(width) * height);
+	for (vector<int> c : c_sorted)
+	{
+		for (int i : c)
+		{
+			temp.push_back(i);
+		}
+	}
+	cout << temp[30] << " " << temp[31] << " " << temp[32] << endl;
+	return(temp);*/
+
+	v = target_histogram(c_sorted, width, height, sigma);
+	cout << "test3" << endl;
+	int N = round(4 * sigma);
+	for (int column = N; column < width - N; column++)
+	{
+		image = specify_column(image, width, height, column, v[static_cast<_int64>(column) - N]); // takes a long time
+	}
+
+	cout << "test4" << endl;
+
+	return(image);
+}
+
+// Compute TV-norm among columns (avoiding columns added by mirroring)
+float TV_column_norm(vector<int> image, int width, int height, int B)
+{
+	float TV = 0;
+	for (int column = B; column < width - B; column++)
+	{
+		for (int row = 0; row < height; row++)
+		{
+			TV = TV + abs((image[static_cast<_int64>(row) * width + column + 1]) - 
+				image[static_cast<_int64>(row) * width + column]);
+		}
+	}
+	return TV;
+}
+
+float gaussian(int x, float sigma)
+{
+	return(1 / (sigma * sqrt(2 * M_PI)) * exp(-(x*x) / (2 * sigma*sigma)));
+}
+
+vector<int> specify_column(vector<int> image, int width, int height, int column, vector<int> target_values)
+{
+
+	// sort v_column and put it in column_sorted
+	vector<int> column_sorted;
+	for (int i = 0; i < height; i++)
+	{
+		column_sorted.push_back(image[i * static_cast<_int64>(width) + column]);
+	}
+	sort(column_sorted.begin(), column_sorted.end());
+
+	// for each entry v_column(i) find indice j of column_sorted such that solumn_sorted(j) == v_column(i) 
+	// change v_column(j) to v_column(j) = target_values(j)
+	for (int i = 0; i < height; i++)
+	{
+		int temp = image[i * static_cast<_int64>(width) + column];
+		for (int j = 0; j < height; j++)
+		{
+			if (temp == column_sorted[j])
+			{
+				image[i * static_cast<_int64>(width) + column] = target_values[j];
+			}
+		}
+	}
+
+	return image;
+}
+
+vector<vector<int>> column_sorting(vector<int> image, int width, int height)
+{
+	vector<vector<int>> V_HISTOS;
+	for (int i = 0; i < width; i++)
+	{
+		V_HISTOS.push_back(histo_column(image, width, height, i));
+	}
+	return(V_HISTOS);
+}
+
+vector<int> histo_column(vector<int> image, int width, int height, int column)
+{
+	vector<int> v;
+	for (int col = 0; col < height; col++)
+	{
+		v.push_back(image[static_cast<_int64>(col) * width + column]);
+	}
+	sort(v.begin(), v.end());
+	return(v);
+}
+
+vector<vector<int>> target_histogram(vector<vector<int>> V_HISTOS, int width, int height, float sigma)
+{
+	vector<vector<int>> FINAL;
+	int N = round(4 * sigma);
+	for (int center = N; center < width - N; center++)
+	{
+		vector<int> v;
+		for (int vline = 0; vline < height; vline++)
+		{
+			float temp = 0;
+			for (int vcolumn = center - N; vcolumn < center + N + 1; vcolumn++)
+			{
+				temp = temp + gaussian((center - vcolumn), sigma) * (V_HISTOS[vcolumn][vline]);
+			}
+			v.push_back(temp);
+		}
+		FINAL.push_back(v);
+	}
+	return(FINAL);
 }
