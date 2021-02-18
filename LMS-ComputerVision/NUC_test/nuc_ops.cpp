@@ -53,6 +53,28 @@ vector<int> mirror(vector<int> image, int width, int height, int perimiter)
 	return output_image;
 }
 
+Mat mirror_cv(Mat image, int width, int height, int perimiter)
+{
+	// Create output Mat and clone input mat to avoid changing it
+	Mat output_image = Mat(height, width + 2 * perimiter, 0);
+	Mat temp = image.clone();
+
+	// Obtain left and right border components as well as the image itself
+	Mat left = temp(Range::all(), Range(0, perimiter));
+	Mat middle = image.clone();
+	Mat right = temp(Range::all(), Range(width - perimiter, width));
+
+	// Mirror border components
+	flip(left, left, +1);
+	flip(right, right, +1);
+
+	// Concatenate images together horizontally
+	hconcat(left, middle, left);
+	hconcat(left, right, output_image);
+
+	return output_image;
+}
+
 vector<int> automire(vector<int> image, int width, int height, int SIGMA_MIN, int SIGMA_MAX, float DELTA)
 {
 	//vector<int> output_image(static_cast<_int64>(width) * height);
@@ -130,18 +152,6 @@ vector<int> mire(vector<int> image, float sigma, int width, int height)
 
 	cout << "test2" << endl;
 
-	/*
-	vector<int> temp(static_cast<_int64>(width) * height);
-	for (vector<int> c : c_sorted)
-	{
-		for (int i : c)
-		{
-			temp.push_back(i);
-		}
-	}
-	cout << temp[30] << " " << temp[31] << " " << temp[32] << endl;
-	return(temp);*/
-
 	v = target_histogram(c_sorted, width, height, sigma);
 	cout << "test3" << endl;
 	int N = round(4 * sigma);
@@ -153,6 +163,26 @@ vector<int> mire(vector<int> image, float sigma, int width, int height)
 	cout << "test4" << endl;
 
 	return(image);
+}
+
+Mat mire_cv(Mat image, float sigma, int width, int height)
+{
+	// Sort columns
+	Mat sorted = Mat(height, image.size().width, 0);
+	cv::sort(image, sorted, SORT_EVERY_COLUMN + SORT_ASCENDING); // 'sorted' now holds sorted columns
+
+	// Make target histogram
+	Mat v = target_histogram_cv(sorted, image.size().width, height, sigma); // runtime could be improved
+
+	// Modify image
+	int N = round(4 * sigma);
+	for (int column = N; column < image.size().width - N; column++)
+	{
+		image = specify_column_cv(image, image.size().width, height, column, v.col(column - N), sorted.col(column)); // runtime could be improved
+	}
+
+	// Return image with borders cropped
+	return image(Range(0, height), Range(N, width + N));
 }
 
 // Compute TV-norm among columns (avoiding columns added by mirroring)
@@ -177,7 +207,6 @@ float gaussian(int x, float sigma)
 
 vector<int> specify_column(vector<int> image, int width, int height, int column, vector<int> target_values)
 {
-
 	// sort v_column and put it in column_sorted
 	vector<int> column_sorted;
 	for (int i = 0; i < height; i++)
@@ -185,7 +214,6 @@ vector<int> specify_column(vector<int> image, int width, int height, int column,
 		column_sorted.push_back(image[i * static_cast<_int64>(width) + column]);
 	}
 	sort(column_sorted.begin(), column_sorted.end());
-
 	// for each entry v_column(i) find indice j of column_sorted such that solumn_sorted(j) == v_column(i) 
 	// change v_column(j) to v_column(j) = target_values(j)
 	for (int i = 0; i < height; i++)
@@ -196,6 +224,24 @@ vector<int> specify_column(vector<int> image, int width, int height, int column,
 			if (temp == column_sorted[j])
 			{
 				image[i * static_cast<_int64>(width) + column] = target_values[j];
+			}
+		}
+	}
+	return image;
+}
+
+Mat specify_column_cv(Mat image, int width, int height, int column, Mat target_values, Mat sorted_column)
+{
+	// for each entry v_column(i) find indice j of column_sorted such that solumn_sorted(j) == v_column(i) 
+	// change v_column(j) to v_column(j) = target_values(j)
+	for (int i = 0; i < height; i++)
+	{
+		int temp = image.at<uchar>(i, column);
+		for (int j = 0; j < height; j++)
+		{
+			if (temp == sorted_column.at<uchar>(j, 0))
+			{
+				image.at<uchar>(i, column) = target_values.at<uchar>(j, 0);
 			}
 		}
 	}
@@ -243,4 +289,25 @@ vector<vector<int>> target_histogram(vector<vector<int>> V_HISTOS, int width, in
 		FINAL.push_back(v);
 	}
 	return(FINAL);
+}
+
+Mat target_histogram_cv(Mat V_HISTOS, int width, int height, float sigma)
+{
+	Mat final = Mat(height, 0, 0);
+	int N = round(4 * sigma);
+	for (int center = N; center < width - N; center++)
+	{
+		Mat v = Mat(height, 1, 0);
+		for (int vline = 0; vline < height; vline++)
+		{
+			float temp = 0;
+			for (int vcolumn = center - N; vcolumn < center + N + 1; vcolumn++)
+			{
+				temp = temp + gaussian((center - vcolumn), sigma) * (V_HISTOS.at<uchar>(vline, vcolumn));
+			}
+			v.at<uchar>(vline, 0) = temp;
+		}
+		hconcat(final, v, final);
+	}
+	return(final);
 }

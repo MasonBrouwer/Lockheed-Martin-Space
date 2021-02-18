@@ -11,13 +11,13 @@
 #include <iostream>
 #include "nuc_ops.h"
 #include <vector>
+#include <chrono>
 
 using namespace cv;
 using namespace std;
+using namespace std::chrono;
 
-const int SIGMA_MIN = 0; //minimal std-dev of the Gaussian-weighting function
-const int SIGMA_MAX = 8; //maximal std-dev of the Gaussian-weighting function
-const float DELTA = 0.5; //step between two consecutive std-dev
+const int SIGMA = 4;
 
 int main(int argc, char** argv)
 {
@@ -39,39 +39,25 @@ int main(int argc, char** argv)
 	}
 	int width = input_image.size().width;
 	int height = input_image.size().height;
-	Mat output_image = Mat(height, width + 8 * SIGMA_MAX, 0);
+	Mat output_image = Mat(height, width + 8 * SIGMA, 0);
 	vector <int> flat_image;
+	
+	cout << "Border mirroring..." << endl;
 
-	cout << "Converting image matrix..." << endl;
+	auto start = high_resolution_clock::now(); //benchmarking
 
-	// Convert Mat into 1D array
-	for (int row = 0; row < height; row++)
-	{
-		for (int col = 0; col < width; col++)
-		{
-			flat_image.push_back(input_image.at<uchar>(row, col));
-		}
-	}
+	// Border mirroring (runtime 600)
+	output_image = mirror_cv(input_image, width, height, 4 * SIGMA);
 
-	cout << "Fixing border..." << endl;
+	cout << "Running MIRE algorithm..." << endl;
 
-	// Border mirroring
-	flat_image = mirror(flat_image, width, height, 4 * SIGMA_MAX);
+	// MIRE stuff (runtime 6,760,000)
+	output_image = mire_cv(output_image, SIGMA, width, height);
 
-	// MIRE stuff
-	flat_image = automire(flat_image, width + 8 * SIGMA_MAX, height, SIGMA_MIN, SIGMA_MAX, DELTA);
-
-	cout << "Restoring image matrix..." << endl;
-
-	// Unconvert 1D array into Mat
-	width = output_image.size().width;
-	for (int row = 0; row < height; row++)
-	{
-		for (int col = 0; col < width; col++)
-		{
-			output_image.at<uchar>(row, col) = flat_image[static_cast<_int64>(row) * width + col];
-		}
-	}
+	// finish benchmarking and return runtime
+	auto stop = high_resolution_clock::now();
+	auto duration = duration_cast<microseconds>(stop - start);
+	cout << "Total runtime: " << duration.count() << " microseconds" << endl;
 
 	cout << "Displaying images..." << endl;
 
